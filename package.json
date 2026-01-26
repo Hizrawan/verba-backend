@@ -1,0 +1,33 @@
+{
+  "name": "verba-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Verba language learning app",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hizrawan/verba-backend.git"
+  },
+  "keywords": ["nodejs", "express", "verba", "backend"],
+  "author": "Your Name",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hizrawan/verba-backend/issues"
+  },
+  "homepage": "https://github.com/Hizrawan/verba-backend#readme",
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "firebase-admin": "^11.5.0",
+    "sequelize": "^6.33.0",
+    "pg": "^8.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
