@@ -1,5 +1,6 @@
 import admin from "../config/firebase.js"; 
 import db from "../config/database.js";    
+import { QueryTypes } from "sequelize";
 
 export const authenticate = async (req, res, next) => {
   try {
@@ -15,23 +16,25 @@ export const authenticate = async (req, res, next) => {
     const email = decoded.email || null;
     const name = decoded.name || null;
 
-    const result = await db.query(
-      `SELECT * FROM "Users" WHERE firebase_uid = $1`,
-      [firebaseUid]
+    let result = await db.query(
+      `SELECT * FROM "Users" WHERE firebase_uid = :uid`,
+      { type: QueryTypes.SELECT, replacements: { uid: firebaseUid } }
     );
 
     let user;
-
-    if (result.rows.length === 0) {
-      const insert = await db.query(
+    if (result.length === 0) {
+      const insertResult = await db.query(
         `INSERT INTO "Users" (firebase_uid, email, name)
-         VALUES ($1, $2, $3)
+         VALUES (:uid, :email, :name)
          RETURNING *`,
-        [firebaseUid, email, name]
+        { 
+          type: QueryTypes.INSERT, 
+          replacements: { uid: firebaseUid, email, name } 
+        }
       );
-      user = insert.rows[0];
+      user = insertResult[0][0]; 
     } else {
-      user = result.rows[0];
+      user = result[0];
     }
 
     req.user = user;
