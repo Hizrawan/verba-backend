@@ -13,7 +13,7 @@ export const authenticate = async (req, res, next) => {
     const name = decoded.name || null;
 
     const result = await db.query(
-      "SELECT * FROM users WHERE firebase_uid = $1",
+      "SELECT * FROM Users WHERE firebase_uid = $1",
       [firebaseUid]
     );
 
@@ -21,7 +21,7 @@ export const authenticate = async (req, res, next) => {
 
     if (result.rows.length === 0) {
       const insert = await db.query(
-        `INSERT INTO users (firebase_uid, email, name)
+        `INSERT INTO Users (firebase_uid, email, name)
          VALUES ($1, $2, $3)
          RETURNING *`,
         [firebaseUid, email, name]
