@@ -1,10 +1,9 @@
 
-import Course from "../repositories/course.repository.js";
+import * as courseRepo from "../repositories/course.repository.js";
 
-export const getAllCourses = async () => {
-  return await Course.findAll();
-};
+export async function createCourse({ title, description }) {
+  if (!title) throw new Error("Title cannot be blank");
 
-export const createCourse = async (data) => {
-  return await Course.create(data);
-};
+  const course = await courseRepo.insertCourse({ title, description });
+  return course;
+}

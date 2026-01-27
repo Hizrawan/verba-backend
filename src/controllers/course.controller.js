@@ -1,5 +1,6 @@
 
 import * as courseService from "../services/course.service.js";
+import { asyncHandler } from "../utils/response.js";
 
 export const getCourses = async (req, res, next) => {
   try {
@@ -8,9 +9,8 @@ export const getCourses = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-export const createCourse = async (req, res, next) => {
-  try {
-    const course = await courseService.createCourse(req.body);
-    res.status(201).json(course);
-  } catch (err) { next(err); }
-};
+export const addCourse = asyncHandler(async (req, res) => {
+  const { title, description } = req.body;
+  const course = await courseService.createCourse({ title, description });
+  res.status(201).json({ success: true, data: course });
+});
