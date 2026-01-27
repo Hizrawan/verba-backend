@@ -1,6 +1,6 @@
 
 import * as courseService from "../services/course.service.js";
-import { asyncHandler } from "../utils/response.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const getCourses = async (req, res, next) => {
   try {
