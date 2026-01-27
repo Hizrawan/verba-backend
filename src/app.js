@@ -8,7 +8,7 @@ import courseRoutes from "./routes/course.route.js";
 import lessonRoutes from "./routes/lesson.route.js";
 import progressRoutes from "./routes/progress.route.js";
 
-import { errorHandler } from "./middlewares/error.middleware.js";
+import { errorHandler } from "./utils/errorHandler.js";
 
 const app = express();
 
