@@ -1,33 +1,37 @@
+import { DataTypes } from "sequelize";
+
 export async function up({ context: queryInterface }) {
   await queryInterface.createTable("Rewards", {
     id: {
-      type: "INTEGER",
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
     user_id: {
-      type: "INTEGER",
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        table: "Users",
-        field: "id",
+        model: "Users",
+        key: "id",
       },
       onDelete: "CASCADE",
     },
     xp: {
-      type: "INTEGER",
+      type: DataTypes.INTEGER,
       defaultValue: 0,
     },
     source: {
-      type: "VARCHAR(100)", // lesson_complete, bonus, dsb
+      type: DataTypes.STRING(100), // lesson_complete, bonus, dsb
     },
     createdAt: {
-      type: "DATE",
+      type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
     updatedAt: {
-      type: "DATE",
+      type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
   });
 }

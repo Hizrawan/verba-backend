@@ -1,39 +1,43 @@
+import { DataTypes } from "sequelize";
+
 export async function up({ context: queryInterface }) {
   await queryInterface.createTable("Progress", {
     id: {
-      type: "INTEGER",
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
     user_id: {
-      type: "INTEGER",
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        table: "Users",
-        field: "id",
+        model: "Users",
+        key: "id",
       },
       onDelete: "CASCADE",
     },
     lesson_id: {
-      type: "INTEGER",
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        table: "Lessons",
-        field: "id",
+        model: "Lessons",
+        key: "id",
       },
       onDelete: "CASCADE",
     },
     completed: {
-      type: "BOOLEAN",
+      type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
     createdAt: {
-      type: "DATE",
+      type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
     updatedAt: {
-      type: "DATE",
+      type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
   });
 
