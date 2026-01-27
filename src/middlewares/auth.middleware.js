@@ -1,12 +1,10 @@
-import admin from "../config/firebase.js";
-import db from "../config/database.js";
+import admin from "./config/firebase.js"; 
+import db from "./config/database.js";    
 
 export const authenticate = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+    if (!token) return res.status(401).json({ error: "Unauthorized" });
 
     const decoded = await admin.auth().verifyIdToken(token);
 
@@ -38,6 +36,6 @@ export const authenticate = async (req, res, next) => {
 
   } catch (err) {
     console.error("AUTH ERROR:", err);
-    res.status(401).json({ error: "Invalid token" });
+    res.status(401).json({ error: err.message });
   }
 };

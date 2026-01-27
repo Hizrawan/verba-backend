@@ -1,15 +1,11 @@
 import admin from "firebase-admin";
-import { readFileSync } from "fs";
-import { join } from "path";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 
-const serviceAccount = JSON.parse(
-  readFileSync(join(process.cwd(), "config", "serviceAccount.json"), "utf8")
-);
+const serviceAccount = require("./serviceAccountKey.json");
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
-}
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
 export default admin;
