@@ -13,15 +13,15 @@ export async function up({ context: queryInterface }) {
       type: "TEXT",
     },
     createdAt: {
-      type: "DATETIME",
+      type: "DATE",
       allowNull: false,
     },
     updatedAt: {
-      type: "DATETIME",
+      type: "DATE",
       allowNull: false,
     },
     deletedAt: {
-      type: "DATETIME",
+      type: "DATE",
     },
   });
 }

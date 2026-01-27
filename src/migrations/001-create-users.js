@@ -31,15 +31,15 @@ export async function up({ context: queryInterface }) {
       comment: "URL profile dari Firebase",
     },
     createdAt: {
-      type: "DATETIME",
+      type: "DATE",
       allowNull: false,
     },
     updatedAt: {
-      type: "DATETIME",
+      type: "DATE",
       allowNull: false,
     },
     deletedAt: {
-      type: "DATETIME",
+      type: "DATE",
       allowNull: true,
     },
   });

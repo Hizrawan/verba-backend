@@ -22,11 +22,11 @@ export async function up({ context: queryInterface }) {
       type: "VARCHAR(100)", // lesson_complete, bonus, dsb
     },
     createdAt: {
-      type: "DATETIME",
+      type: "DATE",
       allowNull: false,
     },
     updatedAt: {
-      type: "DATETIME",
+      type: "DATE",
       allowNull: false,
     },
   });

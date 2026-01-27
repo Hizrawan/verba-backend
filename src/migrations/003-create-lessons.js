@@ -26,15 +26,15 @@ export async function up({ context: queryInterface }) {
       defaultValue: 0,
     },
     createdAt: {
-      type: "DATETIME",
+      type: "DATE",
       allowNull: false,
     },
     updatedAt: {
-      type: "DATETIME",
+      type: "DATE",
       allowNull: false,
     },
     deletedAt: {
-      type: "DATETIME",
+      type: "DATE",
     },
   });
 }

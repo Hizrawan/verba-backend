@@ -28,11 +28,11 @@ export async function up({ context: queryInterface }) {
       defaultValue: false,
     },
     createdAt: {
-      type: "DATETIME",
+      type: "DATE",
       allowNull: false,
     },
     updatedAt: {
-      type: "DATETIME",
+      type: "DATE",
       allowNull: false,
     },
   });
