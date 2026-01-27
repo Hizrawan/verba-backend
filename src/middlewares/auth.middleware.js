@@ -17,14 +17,14 @@ export const authenticate = async (req, res, next) => {
     const name = decoded.name || null;
 
     let result = await db.query(
-      `SELECT * FROM "Users" WHERE firebase_uid = :uid`,
+      `SELECT * FROM "Users" WHERE "firebase_uid" = :uid`,
       { type: QueryTypes.SELECT, replacements: { uid: firebaseUid } }
     );
 
     let user;
     if (result.length === 0) {
       const insertResult = await db.query(
-        `INSERT INTO "Users" (firebase_uid, email, name,createdAt, updatedAt)
+        `INSERT INTO "Users" ("firebase_uid", "email", "name","createdAt", "updatedAt")
          VALUES (:uid, :email, :name, now(), now())
          RETURNING *`,
         { 
