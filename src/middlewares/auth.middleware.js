@@ -1,5 +1,5 @@
-import admin from "./config/firebase.js"; 
-import db from "./config/database.js";    
+import admin from "../config/firebase.js"; 
+import db from "../config/database.js";    
 
 export const authenticate = async (req, res, next) => {
   try {
