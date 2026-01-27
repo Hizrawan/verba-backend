@@ -7,9 +7,12 @@ export const authenticate = async (req, res, next) => {
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
     const decoded = await admin.auth().verifyIdToken(token);
+    console.log("DECODED TOKEN:", decoded);
 
-    const firebaseUid = decoded.uid;
-    const email = decoded.email;
+    const firebaseUid = decoded?.uid;
+    if (!firebaseUid) return res.status(401).json({ error: "Firebase UID missing" });
+
+    const email = decoded.email || null;
     const name = decoded.name || null;
 
     const result = await db.query(
