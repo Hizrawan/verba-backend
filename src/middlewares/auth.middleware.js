@@ -24,8 +24,8 @@ export const authenticate = async (req, res, next) => {
     let user;
     if (result.length === 0) {
       const insertResult = await db.query(
-        `INSERT INTO "Users" (firebase_uid, email, name)
-         VALUES (:uid, :email, :name)
+        `INSERT INTO "Users" (firebase_uid, email, name,createdAt, updatedAt)
+         VALUES (:uid, :email, :name, now(), now())
          RETURNING *`,
         { 
           type: QueryTypes.INSERT, 
