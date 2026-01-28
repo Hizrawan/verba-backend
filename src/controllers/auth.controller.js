@@ -1,5 +1,5 @@
-const admin = require('../config/firebase');
-const { createUserInDB } = require('../services/user.service');
+import admin from '../config/firebase.js';
+import { createUserInDB } from '../services/user.service.js';
 
 export const registerUser = async (req, res, next) => {
   try {

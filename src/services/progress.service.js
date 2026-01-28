@@ -1,10 +1,5 @@
+import * as progressRepo from '../repositories/progress.repository.js';
 
-import Progress from "../repositories/progress.repository.js";
-
-export const getProgressByUser = async (userId) => {
-  return await Progress.findAll({ where: { userId } });
-};
-
-export const updateProgress = async (data) => {
-  return await Progress.upsert(data);
-};
+export const createProgress = (data) => progressRepo.createProgress(data);
+export const getProgressByUser = (userId) => progressRepo.getProgressByUser(userId);
+export const updateProgress = (id, updates) => progressRepo.updateProgress(id, updates);

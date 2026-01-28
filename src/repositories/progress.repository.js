@@ -1,14 +1,6 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
-import User from "./user.repository.js";
-import Lesson from "./lesson.repository.js";
+import { Progress } from '../models/Progress.js';
 
-const Progress = sequelize.define("Progress", {
-  completed: { type: DataTypes.BOOLEAN, defaultValue: false },
-  score: { type: DataTypes.FLOAT, defaultValue: 0 },
-});
-
-Progress.belongsTo(User, { foreignKey: "userId" });
-Progress.belongsTo(Lesson, { foreignKey: "lessonId" });
-
-export default Progress;
+export const createProgress = async (data) => Progress.create(data);
+export const getProgressByUser = async (userId) => Progress.findAll({ where: { user_id: userId } });
+export const getProgressByLesson = async (lessonId) => Progress.findAll({ where: { lesson_id: lessonId } });
+export const updateProgress = async (id, updates) => Progress.update(updates, { where: { id }, returning: true });
