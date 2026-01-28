@@ -21,7 +21,7 @@ export async function up({ context: queryInterface }) {
       defaultValue: 0,
     },
     source: {
-      type: DataTypes.STRING(100), // lesson_complete, bonus, dsb
+      type: DataTypes.STRING(100), 
     },
     createdAt: {
       type: DataTypes.DATE,

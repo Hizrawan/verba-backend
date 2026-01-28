@@ -11,3 +11,21 @@ export const getAllUsers = async () => {
     order: [["createdAt", "DESC"]], 
   });
 };
+
+async function createUserInDB(data) {
+  return await userRepo.createUser(data);
+}
+
+async function getUserByEmail(email) {
+  return await userRepo.findByEmail(email);
+}
+
+async function getUserByFirebaseUid(uid) {
+  return await userRepo.findByFirebaseUid(uid);
+}
+
+module.exports = {
+  createUserInDB,
+  getUserByEmail,
+  getUserByFirebaseUid
+};
