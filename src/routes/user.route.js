@@ -1,6 +1,6 @@
 import express from "express";
 import { authenticate } from "../middlewares/auth.middleware.js";
-import { getAllUsers, updateUser, deleteUser } from "../controllers/user.controller.js";
+import { getAllUsers, updateUser, deleteUser, getUser } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ router.use(authenticate);
 router.get("/", getAllUsers);
 
 // GET user by ID
-router.get("/:id", );
+router.get("/:id", getUser);
 
 // PUT update user
 router.put("/:id", updateUser);
