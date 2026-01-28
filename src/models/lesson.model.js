@@ -1,6 +1,7 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/db.js';
-import { Course } from './Course.js';
+import sequelize from '../config/database.js';
+import { Course } from '../models/course.model.js';
+
 
 export const Lesson = sequelize.define('Lesson', {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
