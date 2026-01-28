@@ -13,3 +13,17 @@ export const updateUser = async (req, res, next) => {
     res.json(user[1][0]); // Sequelize returns [affectedCount, [updatedRow]]
   } catch (err) { next(err); }
 };
+
+export const deleteUser = async (req, res, next) => {
+  try {
+    await userService.deleteUser(req.params.id);
+    res.json({ message: 'User berhasil dihapus' });
+  } catch (err) { next(err); }
+};
+
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await userService.getAllUsers();
+    res.json(users);
+  } catch (err) { next(err); }
+};
