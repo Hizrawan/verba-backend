@@ -1,4 +1,4 @@
-import { Progress } from '../models/Progress.js';
+import { Progress } from '../models/progress.model.js';
 
 export const createProgress = async (data) => Progress.create(data);
 export const getProgressByUser = async (userId) => Progress.findAll({ where: { user_id: userId } });

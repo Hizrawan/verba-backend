@@ -1,4 +1,4 @@
-import { Reward } from '../models/Reward.js';
+import { Reward } from '../models/reward.model.js';
 
 export const createReward = async (data) => Reward.create(data);
 export const getRewardsByUser = async (userId) => Reward.findAll({ where: { user_id: userId } });

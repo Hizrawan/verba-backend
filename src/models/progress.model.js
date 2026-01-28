@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
-import { User } from './User.js';
-import { Lesson } from './Lesson.js';
+import { User } from './user.js';
+import { Lesson } from './lesson.js';
 
 export const Progress = sequelize.define('Progress', {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },

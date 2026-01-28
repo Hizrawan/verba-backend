@@ -1,4 +1,4 @@
-import { Lesson } from '../models/Lesson.js';
+import { Lesson } from '../models/lesson.model.js';
 
 export const createLesson = async (data) => Lesson.create(data);
 export const getLessonsByCourseId = async (courseId) => Lesson.findAll({ where: { course_id: courseId } });

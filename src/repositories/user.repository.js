@@ -1,4 +1,4 @@
-import { User } from '../models/User.js';
+import { User } from '../models/user.model.js';
 
 export const createUser = async (data) => User.create(data);
 export const findByEmail = async (email) => User.findOne({ where: { email } });

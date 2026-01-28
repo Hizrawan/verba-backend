@@ -1,4 +1,4 @@
-import { Course } from '../models/Course.js';
+import { Course } from '../models/course.model.js';
 
 export const createCourse = async (data) => Course.create(data);
 export const getAllCourses = async () => Course.findAll();
