@@ -1,4 +1,4 @@
-name: Deploy Production Backend
+name: Deploy Staging Backend
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to Production EC2
+      - name: Deploy to Staging EC2
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -37,12 +37,12 @@ jobs:
             cd $APP_DIR || exit 1
 
             if [ ! -d "$APP_DIR/.git" ]; then
-              git clone --branch main https://github.com/Hizrawan/verba-backend.git $APP_DIR
+              git clone --branch staging https://github.com/Hizrawan/verba-backend.git $APP_DIR
             fi
 
             cd $APP_DIR
             git fetch origin
-            git reset --hard origin/main
+            git reset --hard origin/staging
 
             npm install
 
@@ -54,5 +54,5 @@ jobs:
             sudo nginx -t
             sudo systemctl reload nginx
 
-            echo "✅ Production deploy completed"
+            echo "✅ Staging deploy completed"
             echo "==== DEPLOY PRODUCTION END ===="
