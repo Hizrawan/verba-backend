@@ -32,8 +32,11 @@ jobs:
 
             echo "Deploying $PM2_NAME ($NODE_ENV) in $APP_DIR"
 
-            # Pastikan PATH PM2 dikenali
-            export PATH=$PATH:/home/ubuntu/.nvm/versions/node/v22.19.0/bin/pm2
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+            cd $APP_DIR || exit 1
 
             # Clone repo kalau folder kosong
             if [ ! -d "$APP_DIR/.git" ]; then
