@@ -10,11 +10,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ Checkout repo
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Deploy via SSH ke EC2
       - name: Deploy to Staging EC2
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -23,47 +21,36 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           script: |
-            echo "==== DEPLOY STAGING START ===="
+            echo "==== DEPLOY PRODUCTION START ===="
 
             APP_DIR="${{ secrets.APP_DIR_STAGING }}"
             PM2_NAME="verba-backend-staging"
             NODE_ENV="staging"
-            PORT=3003
+            PORT=3000
 
             echo "Deploying $PM2_NAME ($NODE_ENV) in $APP_DIR"
 
-            # Pastikan PATH PM2 dikenali
-            export PATH=$PATH:/home/ubuntu/.npm-global/bin
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-            # Clone repo kalau folder kosong
+            cd $APP_DIR || exit 1
+
             if [ ! -d "$APP_DIR/.git" ]; then
               git clone --branch staging https://github.com/Hizrawan/verba-backend.git $APP_DIR
             fi
 
             cd $APP_DIR
-
-            # Set git user
-            git config --global user.name "Hizrawan"
-            git config --global user.email "hizrawandwioka@gmail.com"
-
-            # Sinkronisasi branch staging
             git fetch origin
             git reset --hard origin/staging
 
-            echo "✅ Repo synced. Installing dependencies..."
             npm install
 
-            # Set environment
             export NODE_ENV=$NODE_ENV
             export PORT=$PORT
 
-            # Restart / start PM2 pakai update-env
-            pm2 restart $PM2_NAME --update-env || \
-            pm2 start npm --name "$PM2_NAME" -- start --update-env
+            pm2 restart $PM2_NAME 
 
-            echo "✅ PM2 restarted with updated code and env"
-
-            # Test & reload NGINX
             sudo nginx -t
             sudo systemctl reload nginx
 
