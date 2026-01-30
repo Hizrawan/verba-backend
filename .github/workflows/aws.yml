@@ -1,28 +1,29 @@
-name: Deploy Backend Only
+name: Deploy Backend
 
 on:
   push:
     branches:
       - main
       - staging
+  workflow_dispatch: # Bisa trigger manual
 
 jobs:
-  deploy-backend:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
+      - name: Set branch variable
+        run: |
+          if [ -n "${GITHUB_HEAD_REF}" ]; then
+            echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+          else
+            echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          fi
+        shell: bash
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Deploy backend to EC2
+      - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -30,25 +31,33 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           script: |
-            BRANCH=${GITHUB_REF##*/}
+            echo "Deploying branch: $BRANCH"
 
             if [ "$BRANCH" == "main" ]; then
-              APP_DIR=${{ secrets.APP_DIR_PROD }}
+              APP_DIR="${{ secrets.APP_DIR_PROD }}"
               PM2_NAME="verba-backend"
             elif [ "$BRANCH" == "staging" ]; then
-              APP_DIR=${{ secrets.APP_DIR_STAGING }}
+              APP_DIR="${{ secrets.APP_DIR_STAGING }}"
               PM2_NAME="verba-backend-staging"
             else
               echo "Branch $BRANCH tidak deploy. Doing nothing."
               exit 0
             fi
 
-            echo "Deploying $PM2_NAME from $APP_DIR"
             cd $APP_DIR
 
-            git pull origin $BRANCH
+            # Pastikan Git user di-set
+            git config --global user.name "Hizrawan Oka"
+            git config --global user.email "hizrawan@example.com"
+
+            # Sinkronisasi branch dengan remote
+            git fetch origin
+            git reset --hard origin/$BRANCH
+
+            # Install dependencies dan restart PM2
             npm install
             pm2 restart $PM2_NAME
 
+            # Test dan reload NGINX
             sudo nginx -t
             sudo systemctl reload nginx
