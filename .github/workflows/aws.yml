@@ -18,13 +18,15 @@ jobs:
       # Tentukan branch
       - name: Set branch variable
         run: |
-          if [ -n "${GITHUB_HEAD_REF}" ]; then
-            echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
-          else
-            echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          fi
-          echo "Deploying branch: $BRANCH"
+          # GITHUB_REF biasanya refs/heads/main atau refs/heads/staging
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          echo "Branch detected: $BRANCH_NAME"
+          echo "BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
         shell: bash
+
+      # Debug branch
+      - name: Debug branch
+        run: echo "Deploying branch: $BRANCH"
 
       # Deploy via SSH ke EC2
       - name: Deploy to EC2
