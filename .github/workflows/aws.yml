@@ -20,8 +20,10 @@ jobs:
             echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
           else
             echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          fi
         shell: bash
+
+      - name: Debug branch
+        run: echo "Deploying branch: $BRANCH"
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.7
@@ -31,33 +33,40 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           script: |
-            echo "Deploying branch: $BRANCH"
-
+            # Tentukan folder & PM2 name
             if [ "$BRANCH" == "main" ]; then
               APP_DIR="${{ secrets.APP_DIR_PROD }}"
               PM2_NAME="verba-backend"
+              NODE_ENV="production"
+              PORT=3000
             elif [ "$BRANCH" == "staging" ]; then
               APP_DIR="${{ secrets.APP_DIR_STAGING }}"
               PM2_NAME="verba-backend-staging"
+              NODE_ENV="staging"
+              PORT=3003
             else
               echo "Branch $BRANCH tidak deploy. Doing nothing."
               exit 0
             fi
 
+            echo "Deploying $PM2_NAME from $APP_DIR on $NODE_ENV"
+
             cd $APP_DIR
 
-            # Pastikan Git user di-set
+            # Pastikan git user sudah di-set
             git config --global user.name "Hizrawan"
             git config --global user.email "hizrawandwioka@gmail.com"
 
-            # Sinkronisasi branch dengan remote
+            # Sinkronisasi branch
             git fetch origin
             git reset --hard origin/$BRANCH
 
-            # Install dependencies dan restart PM2
+            # Install dependencies & restart PM2
+            export NODE_ENV=$NODE_ENV
+            export PORT=$PORT
             npm install
-            pm2 restart $PM2_NAME
+            pm2 restart $PM2_NAME || pm2 start npm --name "$PM2_NAME" -- start
 
-            # Test dan reload NGINX
+            # Test & reload NGINX
             sudo nginx -t
             sudo systemctl reload nginx
