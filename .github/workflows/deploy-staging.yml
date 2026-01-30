@@ -55,4 +55,4 @@ jobs:
             sudo systemctl reload nginx
 
             echo "✅ Staging deploy completed"
-            echo "==== DEPLOY PRODUCTION END ===="
+            echo "==== DEPLOY STAGING END ===="
