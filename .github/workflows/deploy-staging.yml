@@ -58,8 +58,7 @@ jobs:
             export PORT=$PORT
 
             # Restart / start PM2 pakai update-env
-            pm2 restart $PM2_NAME --update-env || \
-            pm2 start npm --name "$PM2_NAME" -- start --update-env
+            pm2 restart $PM2_NAME
 
             echo "✅ PM2 restarted with updated code and env"
 
