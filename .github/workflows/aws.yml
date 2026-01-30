@@ -47,8 +47,8 @@ jobs:
             cd $APP_DIR
 
             # Pastikan Git user di-set
-            git config --global user.name "Hizrawan Oka"
-            git config --global user.email "hizrawan@example.com"
+            git config --global user.name "Hizrawan"
+            git config --global user.email "hizrawandwioka@gmail.com"
 
             # Sinkronisasi branch dengan remote
             git fetch origin
