@@ -33,7 +33,7 @@ jobs:
             echo "Deploying $PM2_NAME ($NODE_ENV) in $APP_DIR"
 
             # Pastikan PATH PM2 dikenali
-            export PATH=$PATH:/home/ubuntu/.npm-global/bin
+            export PATH=$PATH:/home/ubuntu/.nvm/versions/node/v22.19.0/bin/pm2
 
             # Clone repo kalau folder kosong
             if [ ! -d "$APP_DIR/.git" ]; then
