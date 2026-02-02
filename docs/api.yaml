@@ -11,6 +11,249 @@ tags:
   - name: Rewards
 
 paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register user (Firebase + local user)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRegisterRequest'
+      responses:
+        '201':
+          description: User registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  user: { $ref: '#/components/schemas/User' }
+
+  /users:
+    get:
+      tags: [Users]
+      summary: List users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Get user by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: User detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      tags: [Users]
+      summary: Update user
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags: [Users]
+      summary: Delete user
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+  /courses:
+    get:
+      tags: [Courses]
+      summary: List courses
+      responses:
+        '200':
+          description: List of courses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+    post:
+      tags: [Courses]
+      summary: Create course
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseCreate'
+      responses:
+        '201':
+          description: Course created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+  /courses/{id}:
+    get:
+      tags: [Courses]
+      summary: Get course by ID
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        '200':
+          description: Course detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+    put:
+      tags: [Courses]
+      summary: Update course
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseUpdate'
+      responses:
+        '200':
+          description: Course updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+    delete:
+      tags: [Courses]
+      summary: Delete course
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        '204':
+          description: Course deleted
+
+  /lessons/course/{courseId}:
+    get:
+      tags: [Lessons]
+      summary: List lessons by course
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        '200':
+          description: Lessons in course
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lesson'
+  /lessons:
+    post:
+      tags: [Lessons]
+      summary: Create lesson
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonCreate'
+      responses:
+        '201':
+          description: Lesson created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+  /lessons/{id}:
+    get:
+      tags: [Lessons]
+      summary: Get lesson by ID
+      parameters:
+        - $ref: '#/components/parameters/LessonId'
+      responses:
+        '200':
+          description: Lesson detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+    put:
+      tags: [Lessons]
+      summary: Update lesson
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/LessonId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonCreate'
+      responses:
+        '200':
+          description: Lesson updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+    delete:
+      tags: [Lessons]
+      summary: Delete lesson
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/LessonId'
+      responses:
+        '200':
+          description: Lesson deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
   /progress:
     get:
       tags: [Progress]
@@ -329,6 +572,12 @@ components:
       required: true
       schema:
         type: integer
+    CourseId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
     ExamId:
       name: id
       in: path
@@ -354,6 +603,71 @@ components:
       schema:
         type: integer
   schemas:
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        firebase_uid: { type: string }
+        email: { type: string }
+        name: { type: string }
+        role: { type: string }
+        photo_url: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    UserUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        role: { type: string }
+        photo_url: { type: string }
+    AuthRegisterRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 6 }
+        name: { type: string }
+        photo_url: { type: string }
+
+    Course:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    CourseCreate:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string }
+        description: { type: string }
+    CourseUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+
+    Lesson:
+      type: object
+      properties:
+        id: { type: integer }
+        course_id: { type: integer }
+        title: { type: string }
+        content: { type: string }
+        order: { type: integer }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    LessonCreate:
+      type: object
+      required: [course_id, title]
+      properties:
+        course_id: { type: integer }
+        title: { type: string }
+        content: { type: string }
+        order: { type: integer, default: 0 }
+
     Progress:
       type: object
       properties:
