@@ -1,0 +1,515 @@
+openapi: 3.0.0
+info:
+  title: Verba Backend API
+  version: 1.0.0
+  description: API contract for progress, exams, and rewards resources.
+servers:
+  - url: /api
+tags:
+  - name: Progress
+  - name: Exams
+  - name: Rewards
+
+paths:
+  /progress:
+    get:
+      tags: [Progress]
+      summary: List all progress
+      responses:
+        '200':
+          description: List of progress records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Progress'
+    post:
+      tags: [Progress]
+      summary: Create progress
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgressCreate'
+      responses:
+        '201':
+          description: Progress created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+  /progress/{id}:
+    get:
+      tags: [Progress]
+      summary: Get progress by ID
+      parameters:
+        - $ref: '#/components/parameters/ProgressId'
+      responses:
+        '200':
+          description: Progress detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+    put:
+      tags: [Progress]
+      summary: Update progress
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ProgressId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgressUpdate'
+      responses:
+        '200':
+          description: Progress updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+    delete:
+      tags: [Progress]
+      summary: Delete progress
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ProgressId'
+      responses:
+        '200':
+          description: Progress deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /progress/user/{userId}:
+    get:
+      tags: [Progress]
+      summary: List progress by user
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Progress entries for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Progress'
+  /progress/lesson/{lessonId}:
+    get:
+      tags: [Progress]
+      summary: List progress by lesson
+      parameters:
+        - $ref: '#/components/parameters/LessonId'
+      responses:
+        '200':
+          description: Progress entries for the lesson
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Progress'
+
+  /exams:
+    get:
+      tags: [Exams]
+      summary: List all exams
+      responses:
+        '200':
+          description: List of exams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Exam'
+    post:
+      tags: [Exams]
+      summary: Create exam
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExamCreate'
+      responses:
+        '201':
+          description: Exam created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exam'
+  /exams/{id}:
+    get:
+      tags: [Exams]
+      summary: Get exam by ID
+      parameters:
+        - $ref: '#/components/parameters/ExamId'
+      responses:
+        '200':
+          description: Exam detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exam'
+  /exams/{id}/questions:
+    post:
+      tags: [Exams]
+      summary: Add questions (MCQ or matching) to an exam
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ExamId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ExamQuestionUpsert'
+      responses:
+        '201':
+          description: Questions created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamWithQuestions'
+    put:
+      tags: [Exams]
+      summary: Update exam
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ExamId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExamUpdate'
+      responses:
+        '200':
+          description: Exam updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exam'
+    delete:
+      tags: [Exams]
+      summary: Delete exam
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ExamId'
+      responses:
+        '200':
+          description: Exam deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+  /rewards:
+    get:
+      tags: [Rewards]
+      summary: List all rewards
+      responses:
+        '200':
+          description: List of rewards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reward'
+    post:
+      tags: [Rewards]
+      summary: Create reward
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RewardCreate'
+      responses:
+        '201':
+          description: Reward created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reward'
+  /rewards/{id}:
+    get:
+      tags: [Rewards]
+      summary: Get reward by ID
+      parameters:
+        - $ref: '#/components/parameters/RewardId'
+      responses:
+        '200':
+          description: Reward detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reward'
+    put:
+      tags: [Rewards]
+      summary: Update reward
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RewardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RewardUpdate'
+      responses:
+        '200':
+          description: Reward updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reward'
+    delete:
+      tags: [Rewards]
+      summary: Delete reward
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RewardId'
+      responses:
+        '200':
+          description: Reward deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /rewards/user/{userId}:
+    get:
+      tags: [Rewards]
+      summary: List rewards by user
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Rewards for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reward'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    ProgressId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    ExamId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    RewardId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: integer
+    LessonId:
+      name: lessonId
+      in: path
+      required: true
+      schema:
+        type: integer
+  schemas:
+    Progress:
+      type: object
+      properties:
+        id: { type: integer }
+        user_id: { type: integer }
+        lesson_id: { type: integer }
+        completed: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    ProgressCreate:
+      type: object
+      required: [user_id, lesson_id]
+      properties:
+        user_id: { type: integer }
+        lesson_id: { type: integer }
+        completed: { type: boolean, default: false }
+    ProgressUpdate:
+      type: object
+      properties:
+        completed: { type: boolean }
+    Exam:
+      type: object
+      properties:
+        id: { type: integer }
+        course_id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        total_questions: { type: integer }
+        passing_score: { type: integer }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExamQuestion'
+    ExamCreate:
+      type: object
+      required: [course_id, title]
+      properties:
+        course_id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        total_questions: { type: integer, default: 0 }
+        passing_score: { type: integer, default: 0 }
+        questions:
+          type: array
+          description: Optional bulk create of questions when creating the exam.
+          items:
+            $ref: '#/components/schemas/ExamQuestionUpsert'
+    ExamUpdate:
+      type: object
+      properties:
+        course_id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        total_questions: { type: integer }
+        passing_score: { type: integer }
+    ExamQuestion:
+      type: object
+      properties:
+        id: { type: integer }
+        exam_id: { type: integer }
+        type:
+          type: string
+          enum: [multiple_choice, matching]
+        prompt: { type: string }
+        options:
+          type: array
+          description: For multiple_choice questions.
+          items:
+            $ref: '#/components/schemas/ExamQuestionOption'
+        pairs:
+          type: array
+          description: For matching questions; each pair maps left to right text.
+          items:
+            $ref: '#/components/schemas/ExamQuestionPair'
+    ExamQuestionUpsert:
+      type: object
+      required: [type, prompt]
+      properties:
+        type:
+          type: string
+          enum: [multiple_choice, matching]
+        prompt: { type: string }
+        options:
+          type: array
+          description: Required for multiple_choice; provide at least one correct.
+          items:
+            $ref: '#/components/schemas/ExamQuestionOptionCreate'
+        pairs:
+          type: array
+          description: Required for matching; list of pairs to match.
+          items:
+            $ref: '#/components/schemas/ExamQuestionPairCreate'
+    ExamWithQuestions:
+      allOf:
+        - $ref: '#/components/schemas/Exam'
+        - type: object
+          properties:
+            questions:
+              type: array
+              items:
+                $ref: '#/components/schemas/ExamQuestion'
+    ExamQuestionOption:
+      type: object
+      properties:
+        id: { type: integer }
+        question_id: { type: integer }
+        text: { type: string }
+        is_correct: { type: boolean }
+    ExamQuestionOptionCreate:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string }
+        is_correct: { type: boolean, default: false }
+    ExamQuestionPair:
+      type: object
+      properties:
+        id: { type: integer }
+        question_id: { type: integer }
+        left_text: { type: string }
+        right_text: { type: string }
+    ExamQuestionPairCreate:
+      type: object
+      required: [left_text, right_text]
+      properties:
+        left_text: { type: string }
+        right_text: { type: string }
+    Reward:
+      type: object
+      properties:
+        id: { type: integer }
+        user_id: { type: integer }
+        xp: { type: integer }
+        source: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    RewardCreate:
+      type: object
+      required: [user_id, xp]
+      properties:
+        user_id: { type: integer }
+        xp: { type: integer, default: 0 }
+        source: { type: string }
+    RewardUpdate:
+      type: object
+      properties:
+        user_id: { type: integer }
+        xp: { type: integer }
+        source: { type: string }
+    Message:
+      type: object
+      properties:
+        message: { type: string }
+    Error:
+      type: object
+      properties:
+        error: { type: string }

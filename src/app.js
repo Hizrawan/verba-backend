@@ -7,6 +7,8 @@ import userRoutes from "./routes/user.route.js";
 import courseRoutes from "./routes/course.route.js";
 import lessonRoutes from "./routes/lesson.route.js";
 import progressRoutes from "./routes/progress.route.js";
+import examRoutes from "./routes/exam.route.js";
+import rewardRoutes from "./routes/reward.route.js";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
 
@@ -21,6 +23,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/lessons", lessonRoutes);
 app.use("/api/progress", progressRoutes);
+app.use("/api/exams", examRoutes);
+app.use("/api/rewards", rewardRoutes);
 
 app.use(errorHandler);
 
