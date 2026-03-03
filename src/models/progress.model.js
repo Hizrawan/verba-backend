@@ -10,7 +10,7 @@ export const Progress = sequelize.define('Progress', {
   completed: { type: DataTypes.BOOLEAN, defaultValue: false },
   score: { type: DataTypes.INTEGER, defaultValue: 0 },
   wrong_count: { type: DataTypes.INTEGER, defaultValue: 0 }
-}, { timestamps: true });
+}, { tableName: 'Progress', timestamps: true });
 
 User.hasMany(Progress, { foreignKey: 'user_id' });
 Lesson.hasMany(Progress, { foreignKey: 'lesson_id' });
