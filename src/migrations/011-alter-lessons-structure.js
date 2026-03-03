@@ -1,68 +1,128 @@
 import { DataTypes } from "sequelize";
 
-export async function up({ context: queryInterface }) {
-  // 1) add enum-based type column
-  await queryInterface.addColumn("Lessons", "type", {
-    type: DataTypes.ENUM("material", "flashcard", "multiple_choice"),
-    allowNull: false,
-    defaultValue: "material",
-  });
+const ENUM_NAME = "enum_Lessons_type";
+const TABLE = "Lessons";
 
-  // Backfill existing rows: assume material when content exists, otherwise multiple_choice to satisfy the check later.
+async function ensureEnum(queryInterface) {
   await queryInterface.sequelize.query(`
-    UPDATE "Lessons"
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = '${ENUM_NAME}') THEN
+        CREATE TYPE "${ENUM_NAME}" AS ENUM ('material', 'flashcard', 'multiple_choice');
+      END IF;
+    END$$;
+  `);
+}
+
+export async function up({ context: queryInterface }) {
+  const table = await queryInterface.describeTable(TABLE);
+
+  await ensureEnum(queryInterface);
+
+  if (!table.type) {
+    await queryInterface.addColumn(TABLE, "type", {
+      type: DataTypes.ENUM("material", "flashcard", "multiple_choice"),
+      allowNull: false,
+      defaultValue: "material",
+    });
+  } else {
+    // Align existing column to the enum type and default/not null
+    await queryInterface.sequelize.query(`
+      ALTER TABLE "${TABLE}"
+      ALTER COLUMN "type" TYPE "${ENUM_NAME}" USING "type"::text::"${ENUM_NAME}",
+      ALTER COLUMN "type" SET DEFAULT 'material',
+      ALTER COLUMN "type" SET NOT NULL
+    `);
+  }
+
+  // Backfill nulls to avoid check failures
+  await queryInterface.sequelize.query(`
+    UPDATE "${TABLE}"
     SET "type" = CASE
-      WHEN "content" IS NULL THEN 'multiple_choice'
-      ELSE 'material'
+      WHEN "type" IS NULL AND "content" IS NULL THEN 'multiple_choice'
+      WHEN "type" IS NULL THEN 'material'
+      ELSE "type"
     END
   `);
 
-  // 2) rename order -> lesson_order and enforce not null default
-  await queryInterface.renameColumn("Lessons", "order", "lesson_order");
-  await queryInterface.changeColumn("Lessons", "lesson_order", {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  });
+  // Rename order -> lesson_order if needed
+  if (!table.lesson_order && table.order) {
+    await queryInterface.renameColumn(TABLE, "order", "lesson_order");
+  }
 
-  // 3) constraints & indexes
-  await queryInterface.addConstraint("Lessons", {
-    fields: ["course_id", "lesson_order"],
-    type: "unique",
-    name: "uq_lessons_course_order",
-  });
+  // Ensure lesson_order exists with not null + default
+  const updatedTable = await queryInterface.describeTable(TABLE);
+  if (updatedTable.lesson_order) {
+    await queryInterface.changeColumn(TABLE, "lesson_order", {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    });
+  }
 
-  await queryInterface.addIndex("Lessons", ["course_id"], {
-    name: "idx_lessons_course_id",
-  });
-
-  await queryInterface.addIndex("Lessons", ["type"], {
-    name: "idx_lessons_type",
-  });
-
-  // Enforce: material lessons must have content
+  // Unique constraint course_id + lesson_order
   await queryInterface.sequelize.query(`
-    ALTER TABLE "Lessons"
-    ADD CONSTRAINT "ck_material_content"
-    CHECK (("type" <> 'material') OR ("content" IS NOT NULL))
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'uq_lessons_course_order'
+      ) THEN
+        ALTER TABLE "${TABLE}"
+        ADD CONSTRAINT "uq_lessons_course_order" UNIQUE ("course_id", "lesson_order");
+      END IF;
+    END$$;
+  `);
+
+  // Indexes
+  await queryInterface.sequelize.query(`
+    CREATE INDEX IF NOT EXISTS "idx_lessons_course_id" ON "${TABLE}"("course_id");
+  `);
+
+  await queryInterface.sequelize.query(`
+    CREATE INDEX IF NOT EXISTS "idx_lessons_type" ON "${TABLE}"("type");
+  `);
+
+  // Check constraint for material content
+  await queryInterface.sequelize.query(`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'ck_material_content'
+      ) THEN
+        ALTER TABLE "${TABLE}"
+        ADD CONSTRAINT "ck_material_content"
+        CHECK (("type" <> 'material') OR ("content" IS NOT NULL));
+      END IF;
+    END$$;
   `);
 }
 
 export async function down({ context: queryInterface }) {
-  // Drop check and indexes/constraints
   await queryInterface.sequelize.query(`
-    ALTER TABLE "Lessons"
+    ALTER TABLE "${TABLE}"
     DROP CONSTRAINT IF EXISTS "ck_material_content"
   `);
 
-  await queryInterface.removeIndex("Lessons", "idx_lessons_type");
-  await queryInterface.removeIndex("Lessons", "idx_lessons_course_id");
-  await queryInterface.removeConstraint("Lessons", "uq_lessons_course_order");
+  await queryInterface.sequelize.query(`
+    DROP INDEX IF EXISTS "idx_lessons_type";
+  `);
 
-  // rename lesson_order back to order
-  await queryInterface.renameColumn("Lessons", "lesson_order", "order");
+  await queryInterface.sequelize.query(`
+    DROP INDEX IF EXISTS "idx_lessons_course_id";
+  `);
 
-  // remove type column and enum
-  await queryInterface.removeColumn("Lessons", "type");
-  await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Lessons_type";');
+  await queryInterface.removeConstraint(TABLE, "uq_lessons_course_order").catch(() => {});
+
+  const table = await queryInterface.describeTable(TABLE);
+  if (table.lesson_order) {
+    await queryInterface.renameColumn(TABLE, "lesson_order", "order").catch(() => {});
+  }
+
+  if (table.type) {
+    await queryInterface.removeColumn(TABLE, "type").catch(() => {});
+  }
+
+  await queryInterface.sequelize.query(`DROP TYPE IF EXISTS "${ENUM_NAME}";`);
 }
