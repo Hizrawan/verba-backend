@@ -20,7 +20,7 @@ export const getLessonById = async (req, res, next) => {
 export const updateLesson = async (req, res, next) => {
   try {
     const updated = await lessonService.updateLesson(req.params.id, req.body);
-    res.json(updated[1][0]);
+    res.json(updated);
   } catch (err) { next(err); }
 };
 
