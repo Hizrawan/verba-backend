@@ -486,6 +486,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Exam'
+  /exams/lesson/{lessonId}:
+    get:
+      tags: [Exams]
+      summary: List exams by lesson
+      parameters:
+        - $ref: '#/components/parameters/LessonId'
+      responses:
+        '200':
+          description: Exams for the lesson
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExamWithQuestions'
   /exams/{id}:
     get:
       tags: [Exams]
@@ -498,7 +513,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Exam'
+                $ref: '#/components/schemas/ExamWithQuestions'
   /exams/{id}/questions:
     post:
       tags: [Exams]
@@ -897,6 +912,7 @@ components:
       properties:
         id: { type: integer }
         course_id: { type: integer }
+        lesson_id: { type: integer }
         title: { type: string }
         description: { type: string }
         total_questions: { type: integer }
@@ -909,9 +925,10 @@ components:
             $ref: '#/components/schemas/ExamQuestion'
     ExamCreate:
       type: object
-      required: [course_id, title]
+      required: [course_id, lesson_id, title]
       properties:
         course_id: { type: integer }
+        lesson_id: { type: integer }
         title: { type: string }
         description: { type: string }
         total_questions: { type: integer, default: 0 }
@@ -925,6 +942,7 @@ components:
       type: object
       properties:
         course_id: { type: integer }
+        lesson_id: { type: integer }
         title: { type: string }
         description: { type: string }
         total_questions: { type: integer }

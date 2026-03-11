@@ -65,9 +65,20 @@ const resolveCourseId = async (lessonId, providedCourseId) => {
 export const syncProgress = async (userId, payload) => {
   const { lesson_id, course_id, completed = false } = payload;
 
-  if (!lesson_id) throw new Error("lesson_id is required");
+  if (!lesson_id) {
+    const err = new Error("lesson_id is required");
+    err.status = 400;
+    throw err;
+  }
 
-  const courseId = await resolveCourseId(lesson_id, course_id);
+  const lesson = await Lesson.findByPk(lesson_id, { attributes: ["course_id"] });
+  if (!lesson) {
+    const err = new Error("Lesson not found");
+    err.status = 404;
+    throw err;
+  }
+
+  const courseId = await resolveCourseId(lesson_id, course_id ?? lesson.course_id);
   const wrongCount =
     Number.isInteger(payload.wrong_count) && payload.wrong_count >= 0
       ? payload.wrong_count
