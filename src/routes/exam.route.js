@@ -4,6 +4,7 @@ import {
   deleteExam,
   getAllExams,
   getExamById,
+  getExamsByLesson,
   updateExam,
 } from "../controllers/exam.controller.js";
 import { addQuestions } from "../controllers/examQuestion.controller.js";
@@ -12,6 +13,7 @@ import { authenticate } from "../middlewares/auth.middleware.js";
 const router = express.Router();
 
 router.get("/", getAllExams);
+router.get("/lesson/:lessonId", getExamsByLesson);
 router.get("/:id", getExamById);
 router.post("/:id/questions", authenticate, addQuestions);
 
