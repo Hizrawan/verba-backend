@@ -20,5 +20,5 @@ export const Exam = sequelize.define(
 Course.hasMany(Exam, { foreignKey: "course_id" });
 Exam.belongsTo(Course, { foreignKey: "course_id" });
 
-Lesson.hasMany(Exam, { foreignKey: "lesson_id" });
-Exam.belongsTo(Lesson, { foreignKey: "lesson_id" });
+Lesson.hasMany(Exam, { foreignKey: "lesson_id", as: "exams" });
+Exam.belongsTo(Lesson, { foreignKey: "lesson_id", as: "lesson" });
