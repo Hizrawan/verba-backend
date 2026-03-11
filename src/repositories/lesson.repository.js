@@ -2,6 +2,7 @@ import { Lesson } from '../models/lesson.model.js';
 import { LessonFlashcard } from '../models/lessonFlashcard.model.js';
 import { LessonQuestion } from '../models/lessonQuestion.model.js';
 import { LessonQuestionOption } from '../models/lessonQuestionOption.model.js';
+import { Exam } from '../models/exam.model.js';
 
 const lessonIncludes = [
   {
@@ -26,6 +27,12 @@ const lessonIncludes = [
         order: [['option_order', 'ASC']],
       },
     ],
+  },
+  {
+    model: Exam,
+    as: 'exams',
+    required: false,
+    separate: true,
   },
 ];
 

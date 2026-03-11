@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
 import { Course } from "../models/course.model.js";
-import { Lesson } from "./lesson.model.js";
+import { Lesson } from "../models/lesson.model.js";
 
 export const Exam = sequelize.define(
   "Exam",
